@@ -134,7 +134,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [NinValidationController::class, 'index'])->name('nin-validation');
             Route::post('/', [NinValidationController::class, 'store'])->name('nin-validation.store');
             Route::get('/check/{id}', [NinValidationController::class, 'checkStatus'])->name('nin-validation.check');
-            Route::post('/webhook', [NinValidationController::class, 'webhook'])->name('nin-validation.webhook');
         });
 
         // BVN Services & CRM
@@ -156,11 +155,5 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
-
-require __DIR__.'/auth.php';
-
-
-
-
 
 require __DIR__.'/auth.php';

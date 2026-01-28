@@ -12,8 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
          $middleware->validateCsrfTokens(except: [
-            'palmpay/webhook',
-            'nin-validation/webhook',
+            '/palmpay/webhook',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
