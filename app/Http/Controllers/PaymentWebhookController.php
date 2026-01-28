@@ -227,8 +227,13 @@ class PaymentWebhookController extends Controller
 
     private function sendNotificationAndEmail($userId, $amountPaid, $orderNo, $bankName, $type)
     {
-        $user = User::find($userId);
-        if ($user && $user->email) {
+        try {
+            $user = User::query()->find($userId);
+            if (!$user || !$user->email) {
+                Log::warning('Skip email: No user or email found for ID '.$userId);
+                return;
+            }
+
             $mail_data = [
                 'type'     => $type,
                 'amount'   => number_format($amountPaid, 2),
@@ -236,16 +241,13 @@ class PaymentWebhookController extends Controller
                 'bankName' => $bankName,
             ];
 
-            try {
-                Mail::to($user->email)->send(new PaymentNotifyMail($mail_data));
-                Log::info('Payment notification sent to '.$user->email.' for transaction '.$orderNo);
-            } catch (TransportExceptionInterface $e) {
-                Log::error('Error sending email for transaction '.$orderNo.': '.$e->getMessage());
-            } catch (\Throwable $e) {
-                Log::error('General error sending email: '.$e->getMessage());
-            }
-        } else {
-            Log::warning('No email found for user '.$userId.' while sending notification');
+            // Use queue() instead of send() to avoid blocking or failing the webhook response
+            Mail::to($user->email)->queue(new PaymentNotifyMail($mail_data));
+            
+            Log::info('Payment notification queued for '.$user->email);
+        } catch (\Throwable $e) {
+            // Log the error but do not throw, so the transaction remains "completed" in the database
+            Log::error('Non-blocking error in sendNotificationAndEmail: '.$e->getMessage());
         }
     }
 }
