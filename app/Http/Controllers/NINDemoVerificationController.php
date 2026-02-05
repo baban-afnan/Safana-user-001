@@ -285,7 +285,7 @@ class NINDemoVerificationController extends Controller
                 ]);
             }
             
-            $transactionRef = 'Demo-' . (time() % 1000000000) . '-' . mt_rand(100, 999);
+            $transactionRef = 'D2' . (time() % 1000000000) . '-' . mt_rand(100, 999);
             $performedBy = $user->first_name . ' ' . $user->last_name;
 
             // Determine status based on whether NIN is suspended
@@ -298,7 +298,7 @@ class NINDemoVerificationController extends Controller
                 'amount' => $servicePrice,
                 'description' => "NIN Demographic Verification - {$serviceField->field_name}",
                 'type' => 'debit',
-                'status' => $transactionStatus,
+                'status' => "completed",
                 'performed_by'    => $performedBy,
                 'metadata' => [
                     'service' => 'verification',

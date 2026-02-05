@@ -412,7 +412,7 @@ class NINPhoneVerificationController extends Controller
         
         DB::beginTransaction();
         try {
-             $transactionRef = 'Slip-' . (time() % 1000000000) . '-' . mt_rand(100, 999);
+             $transactionRef = 'S2' . (time() % 1000000000) . '-' . mt_rand(100, 999);
              $performedBy = $user->first_name . ' ' . $user->last_name;
  
              Transaction::create([
